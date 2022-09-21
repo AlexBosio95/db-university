@@ -2,16 +2,14 @@
 
 SELECT `degrees`.`name`, `students`.`name`, `students`.`surname` 
 FROM `degrees` 
-JOIN `students` 
-ON `students`.`degree_id` = `degrees`.`id` 
+JOIN `students` ON `students`.`degree_id` = `degrees`.`id` 
 WHERE `degrees`.`name` = "Corso di Laurea in Economia";
 
 2. Selezionare tutti i Corsi di Laurea del Dipartimento di Neuroscienze
 
-SELECT `departments`.`name`, `degrees`.`name` 
+SELECT `departments`.`name`, `degrees`.`name`, `degrees`.`level`, 
 FROM `degrees` 
-JOIN `departments` 
-ON `departments`.`id` = `degrees`.`department_id` 
+JOIN `departments` ON `departments`.`id` = `degrees`.`department_id` 
 WHERE `departments`.`name` = "Dipartimento di Neuroscienze"; 
 
 3. Selezionare tutti i corsi in cui insegna Fulvio Amato (id=44)
@@ -54,8 +52,17 @@ WHERE `departments`.`name` = "Dipartimento di Matematica";
 
 SELECT `students`.`name`, `courses`.`name`, COUNT(`exam_student`.`vote`) as 'nr_voti'
 FROM `students`
-JOIN `degrees` ON `degrees`.`id` = `students`.`degree_id`
 JOIN `exam_student` ON `exam_student`.`student_id` = `students`.`id`
 JOIN `exams` ON `exams`.`id` = `exam_student`.`exam_id`
 JOIN `courses` ON `courses`.`id` = `exams`.`course_id`
 GROUP BY `students`.`id`, `courses`.`id`;
+
+<!-- correction -->
+
+SELECT `students`.`name`, `courses`.`name`, COUNT(`exam_student`.`vote`) as 'nr_voti', MAX(`exam_student`.`vote`) as 'max_vote'
+FROM `students`
+JOIN `exam_student` ON `exam_student`.`student_id` = `students`.`id`
+JOIN `exams` ON `exams`.`id` = `exam_student`.`exam_id`
+JOIN `courses` ON `courses`.`id` = `exams`.`course_id`
+GROUP BY `students`.`id`, `courses`.`id`
+HAVING `max_vote` >= 18;
